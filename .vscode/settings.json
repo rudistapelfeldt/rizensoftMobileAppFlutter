@@ -1,0 +1,8 @@
+{
+    "github.gitAuthentication": false,
+    "git.terminalAuthentication": false,
+    "github.copilot.advanced": {
+
+    },
+    "github-enterprise.uri": "https://github.com/rudistapelfeldt"
+}
