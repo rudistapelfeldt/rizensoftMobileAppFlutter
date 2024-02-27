@@ -1,4 +1,4 @@
-import 'package:rizensoft_mobile_app_flutter/models/api/user.dart';
+import 'package:realm/realm.dart';
 import 'package:rizensoft_mobile_app_flutter/models/base_response.dart';
 
 class LoginResponse extends BaseResponse {

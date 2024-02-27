@@ -5,7 +5,7 @@ part 'user.g.dart';
 
 @RealmModel()
 @JsonSerializable(createToJson: false)
-class _User {
+class _User{
   @PrimaryKey()
   late int id = 0;
 
@@ -27,6 +27,8 @@ class _User {
 
   late String confirmPassword = '';
 
+  late String idNumber = '';
+
   late String? passwordSalt = '';
 
   late bool? active = false;
@@ -41,8 +43,10 @@ class _User {
       gender: gender,
       password: password,
       confirmPassword: confirmPassword,
+      idNumber: idNumber,
       passwordSalt: passwordSalt,
       active: active);
+      
 
   User fromJson(Map<String, dynamic> json) {
     return User(
@@ -55,8 +59,9 @@ class _User {
       emailAddress: json['emailAddress'],
       password: json['password'],
       confirmPassword: json['confirmPassword'],
+      idNumber: json['idNumber'],
       passwordSalt: json['passwordSalt'],
       active: json['active']
     ); // Replace this with the actual conversion logic
-  }
+  }   
 }

@@ -21,6 +21,7 @@ class User extends _User with RealmEntity, RealmObjectBase, RealmObject {
     String gender = '',
     String password = '',
     String confirmPassword = '',
+    String idNumber = '',
     String? passwordSalt = '',
     bool? active = false,
   }) {
@@ -36,6 +37,7 @@ class User extends _User with RealmEntity, RealmObjectBase, RealmObject {
         'gender': '',
         'password': '',
         'confirmPassword': '',
+        'idNumber': '',
         'passwordSalt': '',
         'active': false,
       });
@@ -50,6 +52,7 @@ class User extends _User with RealmEntity, RealmObjectBase, RealmObject {
     RealmObjectBase.set(this, 'gender', gender);
     RealmObjectBase.set(this, 'password', password);
     RealmObjectBase.set(this, 'confirmPassword', confirmPassword);
+    RealmObjectBase.set(this, 'idNumber', idNumber);
     RealmObjectBase.set(this, 'passwordSalt', passwordSalt);
     RealmObjectBase.set(this, 'active', active);
   }
@@ -118,6 +121,12 @@ class User extends _User with RealmEntity, RealmObjectBase, RealmObject {
       RealmObjectBase.set(this, 'confirmPassword', value);
 
   @override
+  String get idNumber =>
+      RealmObjectBase.get<String>(this, 'idNumber') as String;
+  @override
+  set idNumber(String value) => RealmObjectBase.set(this, 'idNumber', value);
+
+  @override
   String? get passwordSalt =>
       RealmObjectBase.get<String>(this, 'passwordSalt') as String?;
   @override
@@ -151,6 +160,7 @@ class User extends _User with RealmEntity, RealmObjectBase, RealmObject {
       SchemaProperty('gender', RealmPropertyType.string),
       SchemaProperty('password', RealmPropertyType.string),
       SchemaProperty('confirmPassword', RealmPropertyType.string),
+      SchemaProperty('idNumber', RealmPropertyType.string),
       SchemaProperty('passwordSalt', RealmPropertyType.string, optional: true),
       SchemaProperty('active', RealmPropertyType.bool, optional: true),
     ]);
