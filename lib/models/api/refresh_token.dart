@@ -1,36 +1,29 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:realm/realm.dart';
 
 part 'refresh_token.g.dart';
 
-@RealmModel()
 @JsonSerializable()
-class _RefreshToken {
-  @PrimaryKey()
-  int id = 0;
+class RefreshToken {
 
-  int userId = 0; 
+  String? tokenHash;
 
-  late String? tokenHash;
+  String? tokenSalt;
 
-  late String? tokenSalt;
+  int userId; 
 
-  late DateTime ts;
+  DateTime ts;
 
-  late DateTime expiryDate;
+  DateTime expiryDate;
 
-  //RefreshToken(this.tokenHash, this.tokenSalt, {required this.expiryDate, required this.id, required this.ts, required this.userId});
+  RefreshToken ({
+    this.tokenHash, 
+    this.tokenSalt, 
+    required this.userId,
+    required this.ts,
+    required this.expiryDate
+  });
 
-  // RefreshToken.fromJson(Map<String, dynamic> json)
-  //     : id = json['id'],
-  //       userId = json['userId'],
-  //       tokenHash = json['tokenHash'],
-  //       tokenSalt = json['tokenSalt'],
-  //       ts = DateTime.parse(json['ts']),
-  //       expiryDate = DateTime.parse(json['expiryDate']);
+  factory RefreshToken.fromJson(Map<String, dynamic> json) => _$RefreshTokenFromJson(json);
 
-  //factory RefreshToken.fromJson(Map<String, dynamic> json) =>
-  //    _$RefreshTokenFromJson(json);
-
-  //Map<String, dynamic> toJson() => _$RefreshTokenToJson(this);
+  Map<String, dynamic> toJson() => _$RefreshTokenToJson(this);
 }

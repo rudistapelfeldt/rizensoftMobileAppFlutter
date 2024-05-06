@@ -27,7 +27,7 @@ class SplashView extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginView(title: 'Flutter Demo Home Page'),
+      home: LoginView(),
       // onNavigationNotification: (notification) {
       //   Duration.
       // },

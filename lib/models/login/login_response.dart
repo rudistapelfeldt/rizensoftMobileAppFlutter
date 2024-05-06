@@ -9,13 +9,9 @@ class LoginResponse extends BaseResponse {
 
   LoginResponse(this.user, this.accessToken,{required super.success});
 
-  LoginResponse.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    user = json['user'] != null ? json['user'] : null;
-    accessToken = json['accessToken'] ?? '';
-  }
-
   LoginResponse.fromJsonUser(Map<String, dynamic> json) : super.fromJson(json) {
-    user = json['user'] != null ? json['user'] : null;
-    accessToken = json['accessToken'] ?? '';
+    user = json['user'] != null ? json['user'] as User : null;
+    accessToken = json['accessToken'].toString();
+    success = super.success;
   }
-}
+} 

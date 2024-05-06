@@ -1,8 +1,12 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/login_viewmodel.dart';
+import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key, required this.title});
+  
+  LoginView({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -13,17 +17,75 @@ class LoginView extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  createState() {
+    return LoginViewState();
+  }
 }
 
-class _LoginViewState extends State<LoginView> {
+class LoginViewState extends State<LoginView> {
+  late FocusNode emailFocusNode;
+  late FocusNode passwordFocusNode;
+  TextEditingController emailController = TextEditingController(text: '');
+  TextEditingController passwordController = TextEditingController(text: '');
+  String? emailAddress = '';
+  String? password = '';
+
   @override
   void initState() {
     super.initState();
+    emailFocusNode = FocusNode();
+    passwordFocusNode = FocusNode();
     initialization();
+  }
+
+  @override
+  void dispose() {
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _requestEmailFocus() {
+    setState(() {
+      FocusScope.of(context).requestFocus(emailFocusNode);
+    });
+  }
+
+  void _requestPasswordFocus() {
+    setState(() {
+      FocusScope.of(context).requestFocus(passwordFocusNode);
+    });
+  }
+
+  /// Outlines a text using shadows.
+  static List<Shadow> outlinedText(
+      {double strokeWidth = 2,
+      Color strokeColor = Colors.black,
+      int precision = 5}) {
+    Set<Shadow> result = HashSet();
+    for (int x = 1; x < strokeWidth + precision; x++) {
+      for (int y = 1; y < strokeWidth + precision; y++) {
+        double offsetX = x.toDouble();
+        double offsetY = y.toDouble();
+        result.add(Shadow(
+            offset: Offset(-strokeWidth / offsetX, -strokeWidth / offsetY),
+            color: strokeColor));
+        result.add(Shadow(
+            offset: Offset(-strokeWidth / offsetX, strokeWidth / offsetY),
+            color: strokeColor));
+        result.add(Shadow(
+            offset: Offset(strokeWidth / offsetX, -strokeWidth / offsetY),
+            color: strokeColor));
+        result.add(Shadow(
+            offset: Offset(strokeWidth / offsetX, strokeWidth / offsetY),
+            color: strokeColor));
+      }
+    }
+    return result.toList();
   }
 
   void initialization() async {
@@ -50,49 +112,58 @@ class _LoginViewState extends State<LoginView> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    return Material(
-      borderRadius: BorderRadius.circular(10.0),
-      elevation: 5.0,
-      child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(0xFF2C2C2C),
-                const Color(0xFF2C2C2C),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: SafeArea(
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      20,
-                      10,
-                      20,
-                      10,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(child: SizedBox(height: 40, width: 300)),
-                        _headerControls(),
-                        Expanded(child: SizedBox(height: 40, width: 300)),
-                        footerCoontrols()
-                      ],
-                    ),
-                  ),
+
+    return ViewModelProvider<LoginViewModel>(
+      viewModelBuilder: () => LoginViewModel(context, emailAddress, password),
+      builder: (context, vm, child) {
+        emailController.text = emailAddress?? '';
+        passwordController.text = password?? '';
+
+        return Material(
+          borderRadius: BorderRadius.circular(10.0),
+          elevation: 5.0,
+          child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 114, 108, 108),
+                    Color.fromARGB(255, 116, 111, 111),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-              ],
-            ),
-          )),
+              ),
+              child: SafeArea(
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          20,
+                          10,
+                          20,
+                          10,
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(child: SizedBox(height: 40, width: 300)),
+                            _headerControls(vm),
+                            Expanded(child: SizedBox(height: 40, width: 300)),
+                            footerCoontrols(vm),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        );
+      },
     );
   }
 
-  Widget _headerControls() {
+  Widget _headerControls(LoginViewModel viewModel) {
     var loginImage = Image.asset(
       'assets/logo_transparent.png',
       width: 100,
@@ -106,7 +177,34 @@ class _LoginViewState extends State<LoginView> {
           height: 40,
           width: 300,
           child: TextFormField(
-            decoration: const InputDecoration(
+            controller: emailController,
+            focusNode: emailFocusNode,
+            onTap: _requestEmailFocus,
+            maxLines: 1,
+            style: TextStyle(color: Colors.black),
+            onChanged: (value) {
+              setState(() {
+                emailAddress = emailController.text;
+              });
+              
+            },
+            validator: (String? value) {
+              if (value == null || value.isEmpty || !value.contains('@')) {
+                return 'Please enter you email address';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+              isDense: true,
+              filled: true,
+              fillColor: Colors.white,
+              labelText: 'Email',
+              labelStyle: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.black,
+                  shadows: outlinedText(strokeColor: Colors.white)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 borderSide: BorderSide(color: Colors.blue),
@@ -114,12 +212,6 @@ class _LoginViewState extends State<LoginView> {
               hintText: 'Enter your email',
               hintStyle: TextStyle(color: Colors.white),
             ),
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
         SizedBox(
@@ -129,9 +221,35 @@ class _LoginViewState extends State<LoginView> {
           width: 300,
           height: 40,
           child: TextFormField(
+            controller: passwordController,
+            focusNode: passwordFocusNode,
+            onTap: _requestPasswordFocus,
+            maxLines: 1,
+            style: TextStyle(color: Colors.black),
             obscureText: true,
             keyboardType: TextInputType.text,
-            decoration: const InputDecoration(
+            onChanged: (value) {
+              setState(() {
+                password = passwordController.text;
+              });
+            },
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+              isDense: true,
+              filled: true,
+              fillColor: Colors.white,
+              labelText: 'Password',
+              labelStyle: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.black,
+                  shadows: outlinedText(strokeColor: Colors.white)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 borderSide: BorderSide(color: Colors.blue),
@@ -139,54 +257,42 @@ class _LoginViewState extends State<LoginView> {
               hintText: 'Enter your password',
               hintStyle: TextStyle(color: Colors.white),
             ),
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a password';
-              }
-              return null;
-            },
           ),
         ),
       ],
     );
   }
 
-  Widget footerCoontrols() {
+  Widget footerCoontrols(LoginViewModel viewModel) {
     return Padding(
-        padding: EdgeInsets.fromLTRB( 20, 20, 20, 100),
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 100),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (true) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
+              onPressed: () async {
+                if ((viewModel.emailAddress != null && viewModel.emailAddress!.isNotEmpty) ||
+                    viewModel.password != null && viewModel.password!.isNotEmpty){
+                  await viewModel.login();
                 }
               },
-              child: const Text('Submit'),
+              child: const Text('Login'),
             ),
             SizedBox(
               width: 40,
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (true) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
-              },
-              child: const Text('Register'),
-            ),
+            //ElevatedButton(
+            //onPressed: () {
+            // Validate returns true if the form is valid, or false otherwise.
+            //if (true) {
+            // If the form is valid, display a snackbar. In the real world,
+            // you'd often call a server or save the information in a database.
+
+            //}
+            //},
+            //child: const Text('Register'),
+            //),
           ],
         ));
   }

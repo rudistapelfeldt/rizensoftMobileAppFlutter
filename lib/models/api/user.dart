@@ -1,67 +1,50 @@
-import 'package:realm/realm.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
 
-@RealmModel()
-@JsonSerializable(createToJson: false)
-class _User{
-  @PrimaryKey()
-  late int id = 0;
+@JsonSerializable()
+class User {
 
-  late String? addressId = '';
+  String? passwordSalt;
 
-  late String firstName = '';
+  bool? active;
 
-  late String lastName = '';
+  String? addressId;
 
-  late String userName = '';
+  String firstName;
 
-  late String dateOfBirth = '';
+  String lastName;
 
-  late String emailAddress = '';
+  String userName;
 
-  late String gender = '';
+  String dateOfBirth;
 
-  late String password = '';
+  String emailAddress;
 
-  late String confirmPassword = '';
+  String gender;
 
-  late String idNumber = '';
+  String password;
 
-  late String? passwordSalt = '';
+  String confirmPassword;
 
-  late bool? active = false;
+  String idNumber;
 
-  User toRealmObject() => User(id,
-      addressId: addressId,
-      firstName: firstName,
-      lastName: lastName,
-      userName: userName,
-      dateOfBirth: dateOfBirth,
-      emailAddress: emailAddress,
-      gender: gender,
-      password: password,
-      confirmPassword: confirmPassword,
-      idNumber: idNumber,
-      passwordSalt: passwordSalt,
-      active: active);
-      
+  User (
+    this.passwordSalt,
+    this.addressId, 
+    this.active,{
+    required this.firstName,
+    required this.lastName,
+    required this.userName,
+    required this.dateOfBirth,
+    required this.emailAddress,
+    required this.gender,
+    required this.password,
+    required this.confirmPassword,
+    required this.idNumber,
+  });
 
-  User fromJson(Map<String, dynamic> json) {
-    return User(
-      json['id'],
-      addressId: json['addressId'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      userName: json['userName'],
-      dateOfBirth: json['dateOfBirth'],
-      emailAddress: json['emailAddress'],
-      password: json['password'],
-      confirmPassword: json['confirmPassword'],
-      idNumber: json['idNumber'],
-      passwordSalt: json['passwordSalt'],
-      active: json['active']
-    ); // Replace this with the actual conversion logic
-  }   
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
