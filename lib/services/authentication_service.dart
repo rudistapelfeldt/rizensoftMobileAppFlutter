@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:rizensoft_mobile_app_flutter/models/api/user.dart' as rizensoftUser;
 import 'package:rizensoft_mobile_app_flutter/models/login/login_response.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:rizensoft_mobile_app_flutter/models/login/refresh_token_request.dart';
+import 'package:rizensoft_mobile_app_flutter/models/login/token_response.dart';
 
 class AuthenticationService {
   String baseUrl;
@@ -30,8 +31,34 @@ class AuthenticationService {
     if (response.statusCode == HttpStatus.ok) {
       var data = jsonDecode(response.body);
       return LoginResponse.fromJsonUser(data);
+    }else{
+      throw Exception(response.reasonPhrase);
     }
-    return null;
+  }
+
+  Future<TokenResponse?> refreshToken(RefreshTokenRequest tokenRequest) async {
+    var path = '/auth/refresh_token';
+     var uri = Uri.parse('${baseUrl}:${port}${path}');
+    var httpClient = CustomClient(baseUrl);
+    
+    Map jsonData = {
+      'accessToken': tokenRequest.accessToken,
+      'userId': tokenRequest.userId,
+    };
+   
+    var response = await httpClient.post(uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(jsonData),
+        );
+        
+    if (response.statusCode == HttpStatus.ok) {
+      var data = jsonDecode(response.body);
+      return TokenResponse.fromJsonUser(data);
+    }else{
+      throw Exception(response.reasonPhrase);
+    }
   }
 }
 

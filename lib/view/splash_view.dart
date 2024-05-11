@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rizensoft_mobile_app_flutter/view/onboarding/login_view.dart';
 
 class SplashView extends StatelessWidget {
-  const SplashView({super.key});
+  SplashView({super.key});
 
   // This widget is the root of your application.
   @override

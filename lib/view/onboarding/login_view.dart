@@ -1,11 +1,14 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:realm/realm.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/login_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
 
 class LoginView extends StatefulWidget {
-  
   LoginView({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -17,7 +20,6 @@ class LoginView extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-
   @override
   createState() {
     return LoginViewState();
@@ -27,6 +29,7 @@ class LoginView extends StatefulWidget {
 class LoginViewState extends State<LoginView> {
   late FocusNode emailFocusNode;
   late FocusNode passwordFocusNode;
+  late Realm realm;
   TextEditingController emailController = TextEditingController(text: '');
   TextEditingController passwordController = TextEditingController(text: '');
   String? emailAddress = '';
@@ -35,6 +38,9 @@ class LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
+    realm =
+        RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]))
+            .realm!;
     emailFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
     initialization();
@@ -46,6 +52,7 @@ class LoginViewState extends State<LoginView> {
     passwordFocusNode.dispose();
     emailController.dispose();
     passwordController.dispose();
+    realm.close();
     super.dispose();
   }
 
@@ -112,53 +119,32 @@ class LoginViewState extends State<LoginView> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-
     return ViewModelProvider<LoginViewModel>(
       viewModelBuilder: () => LoginViewModel(context, emailAddress, password),
       builder: (context, vm, child) {
-        emailController.text = emailAddress?? '';
-        passwordController.text = password?? '';
+        emailController.text = emailAddress ?? '';
+        passwordController.text = password ?? '';
 
         return Material(
-          borderRadius: BorderRadius.circular(10.0),
-          elevation: 5.0,
-          child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 114, 108, 108),
-                    Color.fromARGB(255, 116, 111, 111),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: SafeArea(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          20,
-                          10,
-                          20,
-                          10,
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(child: SizedBox(height: 40, width: 300)),
-                            _headerControls(vm),
-                            Expanded(child: SizedBox(height: 40, width: 300)),
-                            footerCoontrols(vm),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        );
+            child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.blue, Colors.orange],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(child: SizedBox(height: 40, width: 300)),
+                _headerControls(vm),
+                Expanded(child: SizedBox(height: 40, width: 300)),
+                footerCoontrols(vm),
+              ],
+            ),
+          ),
+        ));
       },
     );
   }
@@ -186,7 +172,6 @@ class LoginViewState extends State<LoginView> {
               setState(() {
                 emailAddress = emailController.text;
               });
-              
             },
             validator: (String? value) {
               if (value == null || value.isEmpty || !value.contains('@')) {
@@ -271,8 +256,10 @@ class LoginViewState extends State<LoginView> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () async {
-                if ((viewModel.emailAddress != null && viewModel.emailAddress!.isNotEmpty) ||
-                    viewModel.password != null && viewModel.password!.isNotEmpty){
+                if ((viewModel.emailAddress != null &&
+                        viewModel.emailAddress!.isNotEmpty) ||
+                    viewModel.password != null &&
+                        viewModel.password!.isNotEmpty) {
                   await viewModel.login();
                 }
               },

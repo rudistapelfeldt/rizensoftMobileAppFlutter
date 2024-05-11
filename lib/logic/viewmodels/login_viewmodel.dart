@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:realm/realm.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/app_constants.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/dialog_helper.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/repository_helper.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/secure_storage_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/base_viewmodel.dart';
-import 'package:rizensoft_mobile_app_flutter/models/api/user.dart' as app_user;
+import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
 import 'package:rizensoft_mobile_app_flutter/services/authentication_service.dart';
 
 class LoginViewModel extends BaseViewModel {
   AuthenticationService _authenticationService =
       RepositoryHelper.globalAuthRepository;
+
+  RealmHelper? realmHelper;
+
+  SecureStorageHelper secureStorageHelper = SecureStorageHelper();
 
   String? emailAddress = '';
 
@@ -15,6 +25,7 @@ class LoginViewModel extends BaseViewModel {
 
   LoginViewModel(BuildContext context, this.emailAddress, this.password) {
     baseContext = context;
+    realmHelper = RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]));
   }
 
   Future<String> validatePassword(String? value) async {
@@ -45,22 +56,31 @@ class LoginViewModel extends BaseViewModel {
 
 
   Future<bool> login() async {
-    // try {
-    //   var config = Configuration.local([app_user.User.schema]);
-    //   var realm = Realm(config);
-    //   var response = await _authenticationService.login(this.emailAddress, this.password);
-    //   if (response != null) {
-    //     var user = response.user;
-    //     realm.write<app_user.User>(
-    //         () => realm.add((user as app_user.User).toRealmObject()));
+    try {
+      var response = await _authenticationService.login(this.emailAddress, this.password);
+      if (response!.success) {
+        var profile = response.profile;
 
-    //     return true;
-    //   }
-    // } on Exception catch (e) {
-    //   print(e.toString());
-    //   return false;
-    // }
+        //Add access token to secure storage
+        addAccessToken(response.accessToken!);
+        //Add the user's profile
+        realmHelper!.addProfile(profile!);
+        DialogHelper.showToast(AppConstants.LOGGING_IN, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+        return true;
+      }else{
+        DialogHelper.showToast(response.error!, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).colorScheme.errorContainer, Theme.of(baseContext!).colorScheme.error, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+        return false;
+      }
+    } on Exception catch (e) {
+      DialogHelper.showToast(
+        e.toString(), Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).colorScheme.primary, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+      return false;
+    } finally{
+      realmHelper!.realm!.close();
+    }
+  }
 
-    return false;
+  void addAccessToken(String token){
+    secureStorageHelper.addNewItem(AppConstants.ACCESS_TOKEN, token);
   }
 }
