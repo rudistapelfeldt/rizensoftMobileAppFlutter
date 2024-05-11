@@ -1,34 +1,42 @@
 import 'package:realm/realm.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
 
-part 'profile.realm.dart';
+//part 'profile.realm.dart';
 
 @RealmModel()
-class _Profile {
-
+class _Profile{
   @PrimaryKey()
   late int id;
 
-  late String? passwordSalt;
+  late bool active;
 
-  late bool? active;
+  late String gender;
+
+  late String? passwordSalt;
 
   late String? addressId;
 
-  late String? firstName;
+  late List<Address>? addresses;
 
-  late String? lastName;
+  late List<RefreshToken>? refreshTokens;
 
-  late String? userName;
+  late List<Reminder>? reminders;
 
-  late String? dateOfBirth;
+  late String firstName;
 
-  late String? emailAddress;
+  late String lastName;
 
-  late String? gender;
+  late String userName;
 
-  late String? password;
+  late String dateOfBirth;
 
-  late String? confirmPassword;
+  late String emailAddress;
 
-  late String? idNumber;
+  late String password;
+
+  late String confirmPassword;
+
+  late String idNumber;
 }

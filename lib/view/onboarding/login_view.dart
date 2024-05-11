@@ -38,9 +38,9 @@ class LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    realm =
-        RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]))
-            .realm!;
+    // realm =
+    //     RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]))
+    //         .realm!;
     emailFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
     initialization();

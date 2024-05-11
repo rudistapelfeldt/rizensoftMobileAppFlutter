@@ -25,7 +25,7 @@ class LoginViewModel extends BaseViewModel {
 
   LoginViewModel(BuildContext context, this.emailAddress, this.password) {
     baseContext = context;
-    realmHelper = RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]));
+    //realmHelper = RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]));
   }
 
   Future<String> validatePassword(String? value) async {
@@ -59,12 +59,12 @@ class LoginViewModel extends BaseViewModel {
     try {
       var response = await _authenticationService.login(this.emailAddress, this.password);
       if (response!.success) {
-        var profile = response.profile;
+        //var profile = response.profile;
 
         //Add access token to secure storage
-        addAccessToken(response.accessToken!);
+        await addAccessToken(response.accessToken!);
         //Add the user's profile
-        realmHelper!.addProfile(profile!);
+        //realmHelper!.addProfile(profile!);
         DialogHelper.showToast(AppConstants.LOGGING_IN, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
         return true;
       }else{
@@ -80,7 +80,6 @@ class LoginViewModel extends BaseViewModel {
     }
   }
 
-  void addAccessToken(String token){
-    secureStorageHelper.addNewItem(AppConstants.ACCESS_TOKEN, token);
-  }
+  addAccessToken(String token) async => 
+    await secureStorageHelper.addNewItem(AppConstants.ACCESS_TOKEN, token);
 }

@@ -3,8 +3,7 @@ import 'package:realm/realm.dart';
 part 'refresh_token.realm.dart';
 
 @RealmModel()
-class _RefreshToken {
-
+class $RefreshToken {
   @PrimaryKey()
   late int id;
 

@@ -7,7 +7,7 @@ part of 'refresh_token.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class RefreshToken extends _RefreshToken
+class RefreshToken extends $RefreshToken
     with RealmEntity, RealmObjectBase, RealmObject {
   RefreshToken(
     int id,
