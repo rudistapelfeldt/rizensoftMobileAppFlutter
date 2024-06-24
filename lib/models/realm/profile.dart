@@ -1,42 +1,48 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:realm/realm.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
-
-//part 'profile.realm.dart';
+part 'profile.g.dart';
+part 'profile.realm.dart';
 
 @RealmModel()
-class _Profile{
+@JsonSerializable(createToJson: true, )
+class $Profile {
+  Profile get instance=> Profile._();
+      
+  String? passwordSalt;
+
+  String? addressId;
+
   @PrimaryKey()
-  late int id;
+  late int? id;
 
-  late bool active;
+  bool? active;
 
-  late String gender;
+  String? gender;
 
-  late String? passwordSalt;
+  List<$Address> addresses = [];
 
-  late String? addressId;
+  List<$Reminder> reminders = [];
 
-  late List<Address>? addresses;
+  String? firstName;
 
-  late List<RefreshToken>? refreshTokens;
+  String? lastName;
 
-  late List<Reminder>? reminders;
+  String? userName;
 
-  late String firstName;
+  String? dateOfBirth;
 
-  late String lastName;
+  String? emailAddress;
 
-  late String userName;
+  String? password;
 
-  late String dateOfBirth;
+  String? confirmPassword;
 
-  late String emailAddress;
+  String? idNumber;
 
-  late String password;
+  static $Profile? fromJson(Map<String, dynamic> json)  => _$$ProfileFromJson(json);
 
-  late String confirmPassword;
+  Map<String, dynamic> toJson() => _$$ProfileToJson(this);
 
-  late String idNumber;
 }

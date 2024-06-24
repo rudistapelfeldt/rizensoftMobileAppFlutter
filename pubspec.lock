@@ -310,6 +310,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  flutter_pw_validator:
+    dependency: "direct main"
+    description:
+      name: flutter_pw_validator
+      sha256: "01960d4d701f6b972f3a2f324e202d840ecfe1b84e00522f92dece874b1c9b30"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.0"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -448,6 +456,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.7"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.0"
   io:
     dependency: transitive
     description:
@@ -512,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  loading_animation_widget:
+    dependency: "direct main"
+    description:
+      name: loading_animation_widget
+      sha256: ee3659035528d19145d50cf0107632bf647e7306c88b6a32f35f3bed63f6d728
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   logging:
     dependency: transitive
     description:
@@ -520,6 +544,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  luhn_algorithm:
+    dependency: transitive
+    description:
+      name: luhn_algorithm
+      sha256: "1bfafa3d142e75747e7aed73213f8d88c78576d629248c093a6d4d1efd6ed76e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+1"
   matcher:
     dependency: transitive
     description:
@@ -736,6 +768,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  rsa_id_number:
+    dependency: "direct main"
+    description:
+      name: rsa_id_number
+      sha256: "49ab59f6c77a5e790db74ddb048eed7250d3d3bc8aae9b95b9b6661a016da132"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   sane_uuid:
     dependency: transitive
     description:

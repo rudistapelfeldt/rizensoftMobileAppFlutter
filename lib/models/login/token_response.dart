@@ -7,10 +7,4 @@ class TokenResponse extends BaseResponse{
   String? refreshToken;
 
   TokenResponse(this.accessToken, this.refreshToken, {required super.success});
-
-  TokenResponse.fromJsonUser(Map<String, dynamic> json) : super.fromJson(json) {
-    accessToken = json['accessToken'].toString();
-    refreshToken = json['refreshToken'].toString();
-    success = super.success;
-  }
 }

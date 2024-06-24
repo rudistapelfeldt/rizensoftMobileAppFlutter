@@ -7,20 +7,19 @@ part of 'address.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
+class Address extends $Address
+    with RealmEntity, RealmObjectBase, EmbeddedObject {
   Address(
-    int id,
+    String addressId,
+    String addressName,
     String addressLine1,
-    String addressLine2,
     String suburb,
     String city,
     String province,
     String country,
     String postalCode, {
-    String? addressId,
-    String? addressName,
+    String? addressLine2,
   }) {
-    RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'addressId', addressId);
     RealmObjectBase.set(this, 'addressName', addressName);
     RealmObjectBase.set(this, 'addressLine1', addressLine1);
@@ -35,21 +34,16 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
   Address._();
 
   @override
-  int get id => RealmObjectBase.get<int>(this, 'id') as int;
+  String get addressId =>
+      RealmObjectBase.get<String>(this, 'addressId') as String;
   @override
-  set id(int value) => RealmObjectBase.set(this, 'id', value);
+  set addressId(String value) => RealmObjectBase.set(this, 'addressId', value);
 
   @override
-  String? get addressId =>
-      RealmObjectBase.get<String>(this, 'addressId') as String?;
+  String get addressName =>
+      RealmObjectBase.get<String>(this, 'addressName') as String;
   @override
-  set addressId(String? value) => RealmObjectBase.set(this, 'addressId', value);
-
-  @override
-  String? get addressName =>
-      RealmObjectBase.get<String>(this, 'addressName') as String?;
-  @override
-  set addressName(String? value) =>
+  set addressName(String value) =>
       RealmObjectBase.set(this, 'addressName', value);
 
   @override
@@ -60,10 +54,10 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
       RealmObjectBase.set(this, 'addressLine1', value);
 
   @override
-  String get addressLine2 =>
-      RealmObjectBase.get<String>(this, 'addressLine2') as String;
+  String? get addressLine2 =>
+      RealmObjectBase.get<String>(this, 'addressLine2') as String?;
   @override
-  set addressLine2(String value) =>
+  set addressLine2(String? value) =>
       RealmObjectBase.set(this, 'addressLine2', value);
 
   @override
@@ -107,7 +101,6 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
 
   EJsonValue toEJson() {
     return <String, dynamic>{
-      'id': id.toEJson(),
       'addressId': addressId.toEJson(),
       'addressName': addressName.toEJson(),
       'addressLine1': addressLine1.toEJson(),
@@ -124,7 +117,6 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
   static Address _fromEJson(EJsonValue ejson) {
     return switch (ejson) {
       {
-        'id': EJsonValue id,
         'addressId': EJsonValue addressId,
         'addressName': EJsonValue addressName,
         'addressLine1': EJsonValue addressLine1,
@@ -136,16 +128,15 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
         'postalCode': EJsonValue postalCode,
       } =>
         Address(
-          fromEJson(id),
+          fromEJson(addressId),
+          fromEJson(addressName),
           fromEJson(addressLine1),
-          fromEJson(addressLine2),
           fromEJson(suburb),
           fromEJson(city),
           fromEJson(province),
           fromEJson(country),
           fromEJson(postalCode),
-          addressId: fromEJson(addressId),
-          addressName: fromEJson(addressName),
+          addressLine2: fromEJson(addressLine2),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -154,12 +145,11 @@ class Address extends $Address with RealmEntity, RealmObjectBase, RealmObject {
   static final schema = () {
     RealmObjectBase.registerFactory(Address._);
     register(_toEJson, _fromEJson);
-    return SchemaObject(ObjectType.realmObject, Address, 'Address', [
-      SchemaProperty('id', RealmPropertyType.int, primaryKey: true),
-      SchemaProperty('addressId', RealmPropertyType.string, optional: true),
-      SchemaProperty('addressName', RealmPropertyType.string, optional: true),
+    return SchemaObject(ObjectType.embeddedObject, Address, 'Address', [
+      SchemaProperty('addressId', RealmPropertyType.string),
+      SchemaProperty('addressName', RealmPropertyType.string),
       SchemaProperty('addressLine1', RealmPropertyType.string),
-      SchemaProperty('addressLine2', RealmPropertyType.string),
+      SchemaProperty('addressLine2', RealmPropertyType.string, optional: true),
       SchemaProperty('suburb', RealmPropertyType.string),
       SchemaProperty('city', RealmPropertyType.string),
       SchemaProperty('province', RealmPropertyType.string),

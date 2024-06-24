@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
         // tested with just a hot reload.
         // Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
+          background: Colors.white,
           primary: Colors.blueAccent,
           secondary: Colors.black,
           tertiary: Colors.blueGrey,
@@ -78,11 +79,17 @@ class _HomeState extends State<Home> {
           titleLarge: GoogleFonts.oswald(
             fontSize: 30,
             fontStyle: FontStyle.italic,
+            color: Theme.of(context).colorScheme.secondary,
           ),
-          bodyMedium: GoogleFonts.merriweather(),
+          bodyMedium: GoogleFonts.merriweather(
+            fontSize: 12,
+            fontStyle: FontStyle.normal,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
           displaySmall: GoogleFonts.pacifico(
             fontSize: 8,
             fontStyle: FontStyle.normal,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),

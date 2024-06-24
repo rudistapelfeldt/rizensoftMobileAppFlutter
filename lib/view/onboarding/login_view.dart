@@ -5,8 +5,9 @@ import 'package:realm/realm.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/login_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
 
 class LoginView extends StatefulWidget {
   LoginView({super.key});
@@ -30,6 +31,8 @@ class LoginViewState extends State<LoginView> {
   late FocusNode emailFocusNode;
   late FocusNode passwordFocusNode;
   late Realm realm;
+  bool isLoggingIn = false;
+  bool isRegisterLoading = false;
   TextEditingController emailController = TextEditingController(text: '');
   TextEditingController passwordController = TextEditingController(text: '');
   String? emailAddress = '';
@@ -38,9 +41,10 @@ class LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    // realm =
-    //     RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]))
-    //         .realm!;
+    realm = RealmHelper(
+        context,
+        Configuration.local(
+            [Address.schema, Reminder.schema, Profile.schema])).realm!;
     emailFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
     initialization();
@@ -249,37 +253,43 @@ class LoginViewState extends State<LoginView> {
   }
 
   Widget footerCoontrols(LoginViewModel viewModel) {
-    return Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 100),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
+    isLoggingIn = viewModel.isLoggingIn;
+    var loader = CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
+                        );
+
+    var loginButton = ElevatedButton(
               onPressed: () async {
+                setState(() {
+                  isLoggingIn = true;
+                });
                 if ((viewModel.emailAddress != null &&
                         viewModel.emailAddress!.isNotEmpty) ||
                     viewModel.password != null &&
                         viewModel.password!.isNotEmpty) {
                   await viewModel.login();
+                  setState(() {
+                  isLoggingIn = false;
+                });
                 }
               },
               child: const Text('Login'),
-            ),
+            );
+    
+    return Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            isLoggingIn ? loader : loginButton,
             SizedBox(
               width: 40,
               height: 20,
             ),
-            //ElevatedButton(
-            //onPressed: () {
-            // Validate returns true if the form is valid, or false otherwise.
-            //if (true) {
-            // If the form is valid, display a snackbar. In the real world,
-            // you'd often call a server or save the information in a database.
-
-            //}
-            //},
-            //child: const Text('Register'),
-            //),
+            ElevatedButton(
+              onPressed: () async => await viewModel.navigateToRegistration(),
+              child: const Text('Register'),
+            ),
           ],
         ));
   }

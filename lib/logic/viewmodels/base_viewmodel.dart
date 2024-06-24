@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/secure_storage_helper.dart';
 
 class BaseViewModel extends ChangeNotifier {
   bool _disposed = false;
@@ -80,4 +81,6 @@ class BaseViewModel extends ChangeNotifier {
     _disposed = true;
     super.dispose();
   }
+
+  Future<String> getAccessToken () => SecureStorageHelper().getAccessToken();
 }

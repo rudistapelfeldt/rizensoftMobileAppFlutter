@@ -3,19 +3,25 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:realm/realm.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/app_constants.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/dialog_helper.dart';
+import 'package:rizensoft_mobile_app_flutter/helpers/navigation_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/repository_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/secure_storage_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/base_viewmodel.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/refresh_token.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
+import 'package:rizensoft_mobile_app_flutter/models/routes.dart';
 import 'package:rizensoft_mobile_app_flutter/services/authentication_service.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
 
 class LoginViewModel extends BaseViewModel {
   AuthenticationService _authenticationService =
       RepositoryHelper.globalAuthRepository;
 
   RealmHelper? realmHelper;
+
+  bool isLoggingIn = false;
+
+  NavigationHelper navigationHelper = NavigationHelper(); 
 
   SecureStorageHelper secureStorageHelper = SecureStorageHelper();
 
@@ -25,7 +31,7 @@ class LoginViewModel extends BaseViewModel {
 
   LoginViewModel(BuildContext context, this.emailAddress, this.password) {
     baseContext = context;
-    //realmHelper = RealmHelper(Configuration.local([Profile.schema, RefreshToken.schema]));
+    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema]));
   }
 
   Future<String> validatePassword(String? value) async {
@@ -55,31 +61,34 @@ class LoginViewModel extends BaseViewModel {
   }
 
 
-  Future<bool> login() async {
+  Future login() async {
     try {
+      isLoggingIn = true;
       var response = await _authenticationService.login(this.emailAddress, this.password);
-      if (response!.success) {
-        //var profile = response.profile;
+      
+        var profile = response!.profile.instance;
 
         //Add access token to secure storage
-        await addAccessToken(response.accessToken!);
+        await addAccessToken(response.accessToken);
         //Add the user's profile
-        //realmHelper!.addProfile(profile!);
-        DialogHelper.showToast(AppConstants.LOGGING_IN, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
-        return true;
-      }else{
-        DialogHelper.showToast(response.error!, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).colorScheme.errorContainer, Theme.of(baseContext!).colorScheme.error, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
-        return false;
-      }
+        if (realmHelper!.addProfile(profile)){
+          DialogHelper.showToast(AppConstants.loginTexts.LOGGING_IN, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+        
+        }
     } on Exception catch (e) {
+      
       DialogHelper.showToast(
         e.toString(), Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).colorScheme.primary, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
-      return false;
     } finally{
       realmHelper!.realm!.close();
+      isLoggingIn = false;
     }
   }
 
-  addAccessToken(String token) async => 
-    await secureStorageHelper.addNewItem(AppConstants.ACCESS_TOKEN, token);
+  Future navigateToRegistration() async {
+    await NavigationHelper.navigateTo(route: PackageRoutes.register.path);
+  }
+
+  Future addAccessToken(String token) async => 
+    await secureStorageHelper.addNewItem(AppConstants.profileText.accessToken, token);
 }

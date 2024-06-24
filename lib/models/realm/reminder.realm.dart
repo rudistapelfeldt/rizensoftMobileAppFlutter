@@ -7,16 +7,14 @@ part of 'reminder.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class Reminder extends _Reminder
-    with RealmEntity, RealmObjectBase, RealmObject {
+class Reminder extends $Reminder
+    with RealmEntity, RealmObjectBase, EmbeddedObject {
   Reminder(
-    int id,
     String reminderName,
     DateTime reminderStart,
     bool isDismissed,
     bool isArchived,
   ) {
-    RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'reminderName', reminderName);
     RealmObjectBase.set(this, 'reminderStart', reminderStart);
     RealmObjectBase.set(this, 'isDismissed', isDismissed);
@@ -24,11 +22,6 @@ class Reminder extends _Reminder
   }
 
   Reminder._();
-
-  @override
-  int get id => RealmObjectBase.get<int>(this, 'id') as int;
-  @override
-  set id(int value) => RealmObjectBase.set(this, 'id', value);
 
   @override
   String get reminderName =>
@@ -69,7 +62,6 @@ class Reminder extends _Reminder
 
   EJsonValue toEJson() {
     return <String, dynamic>{
-      'id': id.toEJson(),
       'reminderName': reminderName.toEJson(),
       'reminderStart': reminderStart.toEJson(),
       'isDismissed': isDismissed.toEJson(),
@@ -81,14 +73,12 @@ class Reminder extends _Reminder
   static Reminder _fromEJson(EJsonValue ejson) {
     return switch (ejson) {
       {
-        'id': EJsonValue id,
         'reminderName': EJsonValue reminderName,
         'reminderStart': EJsonValue reminderStart,
         'isDismissed': EJsonValue isDismissed,
         'isArchived': EJsonValue isArchived,
       } =>
         Reminder(
-          fromEJson(id),
           fromEJson(reminderName),
           fromEJson(reminderStart),
           fromEJson(isDismissed),
@@ -101,8 +91,7 @@ class Reminder extends _Reminder
   static final schema = () {
     RealmObjectBase.registerFactory(Reminder._);
     register(_toEJson, _fromEJson);
-    return SchemaObject(ObjectType.realmObject, Reminder, 'Reminder', [
-      SchemaProperty('id', RealmPropertyType.int, primaryKey: true),
+    return SchemaObject(ObjectType.embeddedObject, Reminder, 'Reminder', [
       SchemaProperty('reminderName', RealmPropertyType.string),
       SchemaProperty('reminderStart', RealmPropertyType.timestamp),
       SchemaProperty('isDismissed', RealmPropertyType.bool),

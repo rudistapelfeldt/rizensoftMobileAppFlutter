@@ -64,6 +64,8 @@ class SecureStorageHelper extends PropertyChangeNotifier<String> {
     );
     _readAll();
   }
+
+  Future<String> getAccessToken() async => await storage.read(key: AppConstants.profileText.accessToken).toString();
 }
 
 class _SecItem {
