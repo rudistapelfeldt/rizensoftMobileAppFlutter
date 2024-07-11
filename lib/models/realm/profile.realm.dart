@@ -7,7 +7,7 @@ part of 'profile.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class Profile extends $Profile with RealmEntity, RealmObjectBase, RealmObject {
+class Profile extends _Profile with RealmEntity, RealmObjectBase, RealmObject {
   Profile(
     int? id, {
     String? passwordSalt,

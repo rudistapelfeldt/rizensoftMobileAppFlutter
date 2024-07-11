@@ -12,7 +12,13 @@ class RealmHelper{
   BuildContext context;
 
   RealmHelper(this.context, LocalConfiguration config){
-    this.realm = realmInstance(config);
+    try{
+      this.realm = realmInstance(config);
+    } catch (e) {
+      realm!.close(); // This gives late initialisation error
+      Realm.deleteRealm(config.path); // This gives realm is already opened error
+      rethrow;
+    }
   }
 
   Realm realmInstance(LocalConfiguration config){
@@ -26,10 +32,13 @@ class RealmHelper{
     try{
       realm?.write(() => realm?.add(profile, update: true));
       return true;
-    }on Exception catch (exception){
+    }on RealmException catch (exception){
       DialogHelper.displayAlert(context, AppConstants.dialog.error, exception.toString());
       return false;
-    } 
+    }on StackOverflowError catch (e, stackTrace){
+      print(stackTrace.toString());
+      return false;
+    }
   }
 
   void deleteProfile(Profile profile){

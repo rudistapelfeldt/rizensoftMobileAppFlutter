@@ -304,7 +304,7 @@ class RegistrationViewState extends State<RegistrationView> {
                   EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
               isDense: true,
               filled: true,
-              fillColor: Theme.of(context).colorScheme.background,
+              fillColor: Theme.of(context).colorScheme.surface,
               labelText: 'First name',
               labelStyle: TextStyle(
                   fontSize: AppConstants.fontSize.body,
@@ -347,7 +347,7 @@ class RegistrationViewState extends State<RegistrationView> {
                   EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
               isDense: true,
               filled: true,
-              fillColor: Theme.of(context).colorScheme.background,
+              fillColor: Theme.of(context).colorScheme.surface,
               labelText: 'Last nmae',
               labelStyle: TextStyle(
                   fontSize: AppConstants.fontSize.body,

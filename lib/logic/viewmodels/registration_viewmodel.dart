@@ -41,7 +41,7 @@ class RegistrationViewModel extends BaseViewModel{
       //Add access token to secure storage
       await addAccessToken(response!.accessToken);
       //Add the user's profile
-      if (realmHelper!.addProfile(response.profile.instance)){
+      if (realmHelper!.addProfile(response.profile()!)){
         DialogHelper.showToast(AppConstants.registerTexts.SUCCESSFUL, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
         //navigate to dashboard
         await navigateToDashboard();

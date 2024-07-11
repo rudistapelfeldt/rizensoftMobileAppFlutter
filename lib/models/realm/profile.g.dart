@@ -6,7 +6,7 @@ part of 'profile.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-$Profile _$$ProfileFromJson(Map<String, dynamic> json) => $Profile()
+_Profile _$ProfileFromJson(Map<String, dynamic> json) => _Profile()
   ..passwordSalt = json['passwordSalt'] as String?
   ..addressId = json['addressId'] as String?
   ..id = (json['id'] as num?)?.toInt()
@@ -27,7 +27,7 @@ $Profile _$$ProfileFromJson(Map<String, dynamic> json) => $Profile()
   ..confirmPassword = json['confirmPassword'] as String?
   ..idNumber = json['idNumber'] as String?;
 
-Map<String, dynamic> _$$ProfileToJson($Profile instance) => <String, dynamic>{
+Map<String, dynamic> _$ProfileToJson(_Profile instance) => <String, dynamic>{
       'passwordSalt': instance.passwordSalt,
       'addressId': instance.addressId,
       'id': instance.id,

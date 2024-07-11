@@ -26,11 +26,16 @@ class NavigationHelper{
   static final List<String> _navigationRoutesList = List.empty(growable: true);
 
   static String getAndSetInitialRoute() {
-    String initialRoute =  PackageRoutes.login.path;
 
-    _navigationRoutesList.add(initialRoute);
-
-    return initialRoute;
+    try {
+      
+      _navigationRoutesList.add(PackageRoutes.login.path);
+      
+      return PackageRoutes.login.path;
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+    return '';
   }
 
   static Future<Object?> navigateTo({

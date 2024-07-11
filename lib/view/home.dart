@@ -50,7 +50,7 @@ class _HomeState extends State<Home> {
         // tested with just a hot reload.
         // Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
-          background: Colors.white,
+          surface: Colors.white,
           primary: Colors.blueAccent,
           secondary: Colors.black,
           tertiary: Colors.blueGrey,

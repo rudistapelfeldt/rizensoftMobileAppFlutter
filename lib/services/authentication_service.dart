@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'package:rizensoft_mobile_app_flutter/helpers/app_constants.dart';
 import 'package:rizensoft_mobile_app_flutter/models/login/login_response.dart';
 import 'dart:io';
@@ -16,9 +17,10 @@ class AuthenticationService {
 
   Future<LoginResponse?> login(String? emailAddress, String? password) async {
     var path = '/auth/login';
-     var uri = Uri.parse('${baseUrl}:${port}${path}');
+     var uri = Uri.parse('${baseUrl}${path}');
     var httpClient = CustomClient(baseUrl);
     
+  
     Map jsonData = {
       'emailAddress': emailAddress,
       'password': password,
@@ -29,10 +31,11 @@ class AuthenticationService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(jsonData),
+        
         );
         
     if (response.statusCode == HttpStatus.ok) {
-      return LoginResponse(response.body, success: AppConstants.SUCCESS);
+      return LoginResponse(json: response.body, success: AppConstants.SUCCESS);
     }else{
       throw Exception(response.reasonPhrase);
     }
@@ -40,7 +43,7 @@ class AuthenticationService {
 
   Future<RegisterResponse?> register(RegisterRequest request) async {
     var path = '/auth/register';
-     var uri = Uri.parse('${baseUrl}:${port}${path}');
+     var uri = Uri.parse('${baseUrl}${path}');
     var httpClient = CustomClient(baseUrl);
     
     var response = await httpClient.post(uri,
@@ -51,7 +54,7 @@ class AuthenticationService {
         );
         
     if (response.statusCode == HttpStatus.ok) {
-      return RegisterResponse(response.body, success: AppConstants.SUCCESS);
+      return RegisterResponse(json: response.body, success: AppConstants.SUCCESS);
     }else{
       throw Exception(response.reasonPhrase);
     }

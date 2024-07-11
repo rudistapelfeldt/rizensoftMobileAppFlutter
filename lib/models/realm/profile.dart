@@ -7,9 +7,7 @@ part 'profile.realm.dart';
 
 @RealmModel()
 @JsonSerializable(createToJson: true, )
-class $Profile {
-  Profile get instance=> Profile._();
-      
+class _Profile {
   String? passwordSalt;
 
   String? addressId;
@@ -40,9 +38,29 @@ class $Profile {
   String? confirmPassword;
 
   String? idNumber;
+}
 
-  static $Profile? fromJson(Map<String, dynamic> json)  => _$$ProfileFromJson(json);
+extension ProfileJ on Profile {
+  static Profile toRealmObject(_Profile profile) {
+    return Profile(
+      profile.id,
+      passwordSalt: profile.passwordSalt,
+      addressId: profile.addressId,
+      active: profile.active,
+      gender: profile.gender,
+      addresses: profile.addresses.map((e) => Address(e.addressId, e.addressName, e.addressLine1, e.suburb, e.city, e.province, e.country, e.postalCode)),
+      reminders: profile.reminders.map((e) => Reminder(e.reminderName, e.reminderStart, e.isDismissed, e.isArchived)),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      userName: profile.userName,
+      dateOfBirth: profile.dateOfBirth,
+      emailAddress: profile.emailAddress,
+      password: profile.password,
+      confirmPassword: profile.confirmPassword,
+      idNumber: profile.idNumber
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$$ProfileToJson(this);
-
+  static Profile fromJson(Map<String, dynamic> json) => toRealmObject(_$ProfileFromJson(json));
+  Map<String, dynamic> toJson() => _$ProfileToJson(this);
 }

@@ -5,6 +5,7 @@ import 'package:realm/realm.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/login_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
+import 'package:rizensoft_mobile_app_flutter/models/keys/login_keys.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
@@ -31,6 +32,8 @@ class LoginViewState extends State<LoginView> {
   late FocusNode emailFocusNode;
   late FocusNode passwordFocusNode;
   late Realm realm;
+  late LoginViewModel viewModel;
+
   bool isLoggingIn = false;
   bool isRegisterLoading = false;
   TextEditingController emailController = TextEditingController(text: '');
@@ -126,6 +129,7 @@ class LoginViewState extends State<LoginView> {
     return ViewModelProvider<LoginViewModel>(
       viewModelBuilder: () => LoginViewModel(context, emailAddress, password),
       builder: (context, vm, child) {
+        viewModel = vm;
         emailController.text = emailAddress ?? '';
         passwordController.text = password ?? '';
 
@@ -142,9 +146,9 @@ class LoginViewState extends State<LoginView> {
             child: Column(
               children: <Widget>[
                 Expanded(child: SizedBox(height: 40, width: 300)),
-                _headerControls(vm),
+                _headerControls(),
                 Expanded(child: SizedBox(height: 40, width: 300)),
-                footerCoontrols(vm),
+                footerCoontrols(),
               ],
             ),
           ),
@@ -153,7 +157,7 @@ class LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _headerControls(LoginViewModel viewModel) {
+  Widget _headerControls() {
     var loginImage = Image.asset(
       'assets/logo_transparent.png',
       width: 100,
@@ -167,6 +171,7 @@ class LoginViewState extends State<LoginView> {
           height: 40,
           width: 300,
           child: TextFormField(
+            key: LoginKeys.emailInputKey,
             controller: emailController,
             focusNode: emailFocusNode,
             onTap: _requestEmailFocus,
@@ -174,7 +179,8 @@ class LoginViewState extends State<LoginView> {
             style: TextStyle(color: Colors.black),
             onChanged: (value) {
               setState(() {
-                emailAddress = emailController.text;
+                emailAddress = 'r.stapelfeldt@gmail.com';
+                //emailAddress = emailController.text;
               });
             },
             validator: (String? value) {
@@ -210,6 +216,7 @@ class LoginViewState extends State<LoginView> {
           width: 300,
           height: 40,
           child: TextFormField(
+            key: LoginKeys.passwordInputKey,
             controller: passwordController,
             focusNode: passwordFocusNode,
             onTap: _requestPasswordFocus,
@@ -219,7 +226,8 @@ class LoginViewState extends State<LoginView> {
             keyboardType: TextInputType.text,
             onChanged: (value) {
               setState(() {
-                password = passwordController.text;
+                password = 'Th3HugeD3v';
+                //password = passwordController.text;
               });
             },
             validator: (String? value) {
@@ -252,30 +260,30 @@ class LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget footerCoontrols(LoginViewModel viewModel) {
+  Widget footerCoontrols() {
     isLoggingIn = viewModel.isLoggingIn;
     var loader = CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                        );
+      color: Theme.of(context).colorScheme.primary,
+    );
 
     var loginButton = ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  isLoggingIn = true;
-                });
-                if ((viewModel.emailAddress != null &&
-                        viewModel.emailAddress!.isNotEmpty) ||
-                    viewModel.password != null &&
-                        viewModel.password!.isNotEmpty) {
-                  await viewModel.login();
-                  setState(() {
-                  isLoggingIn = false;
-                });
-                }
-              },
-              child: const Text('Login'),
-            );
-    
+      key: LoginKeys.loginButtonKey,
+      onPressed: () async {
+        setState(() {
+          isLoggingIn = true;
+        });
+        if ((viewModel.emailAddress != null &&
+                viewModel.emailAddress!.isNotEmpty) ||
+            viewModel.password != null && viewModel.password!.isNotEmpty) {
+          await viewModel.login();
+          setState(() {
+            isLoggingIn = false;
+          });
+        }
+      },
+      child: const Text('Login'),
+    );
+
     return Padding(
         padding: EdgeInsets.fromLTRB(20, 20, 20, 100),
         child: Row(

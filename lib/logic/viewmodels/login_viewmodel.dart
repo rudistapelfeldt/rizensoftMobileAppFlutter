@@ -12,6 +12,7 @@ import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
 import 'package:rizensoft_mobile_app_flutter/models/routes.dart';
 import 'package:rizensoft_mobile_app_flutter/services/authentication_service.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
+import 'dart:developer';
 
 class LoginViewModel extends BaseViewModel {
   AuthenticationService _authenticationService =
@@ -21,7 +22,7 @@ class LoginViewModel extends BaseViewModel {
 
   bool isLoggingIn = false;
 
-  NavigationHelper navigationHelper = NavigationHelper(); 
+  NavigationHelper navigationHelper = NavigationHelper();
 
   SecureStorageHelper secureStorageHelper = SecureStorageHelper();
 
@@ -31,7 +32,7 @@ class LoginViewModel extends BaseViewModel {
 
   LoginViewModel(BuildContext context, this.emailAddress, this.password) {
     baseContext = context;
-    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema]));
+    initRealm();
   }
 
   Future<String> validatePassword(String? value) async {
@@ -60,26 +61,47 @@ class LoginViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  void initRealm() {
+    realmHelper = RealmHelper(
+        baseContext!, Configuration.local([Address.schema, Reminder.schema]));
+    realmHelper!.realm = realmHelper!
+        .realmInstance(Configuration.local([Address.schema, Reminder.schema]));
+  }
 
   Future login() async {
     try {
       isLoggingIn = true;
-      var response = await _authenticationService.login(this.emailAddress, this.password);
-      
-        var profile = response!.profile.instance;
+      var response =
+          await _authenticationService.login(this.emailAddress, this.password);
 
-        //Add access token to secure storage
-        await addAccessToken(response.accessToken);
-        //Add the user's profile
-        if (realmHelper!.addProfile(profile)){
-          DialogHelper.showToast(AppConstants.loginTexts.LOGGING_IN, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
-        
-        }
-    } on Exception catch (e) {
-      
+      //Add access token to secure storage
+      await addAccessToken(response!.accessToken!);
+
+      //if realm is closed, open an instance
+      if (realmHelper!.realm!.isClosed) {
+        initRealm();
+      }
+
+      //Add the user's profile
+      realmHelper!.addProfile(response.profile()!);
+       
       DialogHelper.showToast(
-        e.toString(), Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).colorScheme.primary, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
-    } finally{
+          AppConstants.loginTexts.LOGGING_IN,
+          Toast.LENGTH_LONG,
+          ToastGravity.BOTTOM,
+          Theme.of(baseContext!).primaryColor,
+          Theme.of(baseContext!).colorScheme.secondary,
+          Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+    } on StackOverflowError catch (e) {
+      log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${e.stackTrace}');
+      DialogHelper.showToast(
+          e.toString(),
+          Toast.LENGTH_LONG,
+          ToastGravity.BOTTOM,
+          Theme.of(baseContext!).colorScheme.primary,
+          Theme.of(baseContext!).colorScheme.secondary,
+          Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+    } finally {
       realmHelper!.realm!.close();
       isLoggingIn = false;
     }
@@ -89,6 +111,6 @@ class LoginViewModel extends BaseViewModel {
     await NavigationHelper.navigateTo(route: PackageRoutes.register.path);
   }
 
-  Future addAccessToken(String token) async => 
-    await secureStorageHelper.addNewItem(AppConstants.profileText.accessToken, token);
+  Future addAccessToken(String token) async => await secureStorageHelper
+      .addNewItem(AppConstants.profileText.accessToken, token);
 }

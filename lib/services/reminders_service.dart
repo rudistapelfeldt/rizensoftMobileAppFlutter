@@ -16,7 +16,7 @@ class RemindersService{
 
   Future<ReminderResponse?> getAll() async {
     var path = '/reminder/${userId}/get';
-     var uri = Uri.parse('${baseUrl}:${port}${path}');
+     var uri = Uri.parse('${baseUrl}${path}');
     var httpClient = CustomClient(baseUrl);
     
     var response = await httpClient.post(uri,
