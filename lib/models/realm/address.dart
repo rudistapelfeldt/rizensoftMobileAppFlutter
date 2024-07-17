@@ -27,21 +27,20 @@ class $Address {
 
   late String postalCode;
 
-  $Address toRealmObject() => instance.toRealmObject();
+  // $Address toRealmObject() => instance.toRealmObject();
 
-  // Address fromJson(Map<String, dynamic> json) {
-  //   return Address(
-  //     addressId = json['addressId'],
-  //     addressName = json['addressName'],
-  //     addressId = json['addressId'],
-  //     addressLine1 = json['addressLine1'],
-  //     addressLine2 = json['address?Line2'],
-  //     suburb = json['suburb'],
-  //     city= json['addressId'],
-  //     province = json['province'],
-  //     country = json['country'],
-  //   );
-  // }
-  static $Address fromJson(Map<String, dynamic> json) => _$$AddressFromJson(json).toRealmObject();
+  Address toRealmObject($Address address) {
+    return Address(
+      address.addressId,
+      address.addressName,
+      address.addressLine1,
+      address.addressLine2!,
+      address.suburb,
+      address.city,
+      address.province,
+      address.country,
+    );
+  }
+  static $Address fromJson(Map<String, dynamic> json) => _$$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$$AddressToJson(this);
 }

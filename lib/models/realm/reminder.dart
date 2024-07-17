@@ -17,15 +17,11 @@ class $Reminder {
 
   late bool isArchived;
 
-  $Reminder toRealmObject() => instance.freeze();
+  $Reminder toRealmObject() => instance.toRealmObject();
 
-  // Reminder fromJson(Map<String, dynamic> json) => Reminder(
-  //   reminderName = json['reminderName'],
-  //   reminderStart =  json['reminderStart'], 
-  //   isDismissed = json['isDismissed'], 
-  //   isArchived = json['isArchived'],
-  // );
+  Reminder toObject() => instance;
 
   static $Reminder fromJson(Map<String, dynamic> json) => _$$ReminderFromJson(json).toRealmObject();
   Map<String, dynamic> toJson() => _$$ReminderToJson(this);
 }
+

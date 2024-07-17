@@ -9,6 +9,7 @@ import 'package:rizensoft_mobile_app_flutter/helpers/repository_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/secure_storage_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/base_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 import 'package:rizensoft_mobile_app_flutter/models/routes.dart';
 import 'package:rizensoft_mobile_app_flutter/services/authentication_service.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
@@ -63,9 +64,9 @@ class LoginViewModel extends BaseViewModel {
 
   void initRealm() {
     realmHelper = RealmHelper(
-        baseContext!, Configuration.local([Address.schema, Reminder.schema]));
+        baseContext!, Configuration.local([Address.schema, Reminder.schema, Profile.schema]));
     realmHelper!.realm = realmHelper!
-        .realmInstance(Configuration.local([Address.schema, Reminder.schema]));
+        .realmInstance(Configuration.local([Address.schema, Reminder.schema, Profile.schema]));
   }
 
   Future login() async {
@@ -83,15 +84,20 @@ class LoginViewModel extends BaseViewModel {
       }
 
       //Add the user's profile
-      realmHelper!.addProfile(response.profile()!);
-       
-      DialogHelper.showToast(
+     if (realmHelper!.addProfile(response.profile!)) {
+        DialogHelper.showToast(
           AppConstants.loginTexts.LOGGING_IN,
           Toast.LENGTH_LONG,
           ToastGravity.BOTTOM,
           Theme.of(baseContext!).primaryColor,
           Theme.of(baseContext!).colorScheme.secondary,
           Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
+
+        await () async {
+          await NavigationHelper.navigateTo(route: PackageRoutes.dashboard.path);
+        }();
+     }
+       
     } on StackOverflowError catch (e) {
       log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${e.stackTrace}');
       DialogHelper.showToast(
@@ -109,6 +115,10 @@ class LoginViewModel extends BaseViewModel {
 
   Future navigateToRegistration() async {
     await NavigationHelper.navigateTo(route: PackageRoutes.register.path);
+  }
+
+  Future navigateToDashboard() async {
+    await NavigationHelper.navigateTo(route: PackageRoutes.dashboard.path);
   }
 
   Future addAccessToken(String token) async => await secureStorageHelper

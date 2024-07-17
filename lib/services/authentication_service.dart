@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:rizensoft_mobile_app_flutter/models/login/refresh_token_request.dart';
 import 'package:rizensoft_mobile_app_flutter/models/login/token_response.dart';
+import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 import 'package:rizensoft_mobile_app_flutter/models/register/register_request.dart';
 import 'package:rizensoft_mobile_app_flutter/models/register/register_response.dart';
 
@@ -29,13 +30,14 @@ class AuthenticationService {
     var response = await httpClient.post(uri,
         headers: {
           'Content-Type': 'application/json',
+          
         },
         body: jsonEncode(jsonData),
         
         );
         
     if (response.statusCode == HttpStatus.ok) {
-      return LoginResponse(json: response.body, success: AppConstants.SUCCESS);
+      return LoginResponse(response.body, success: AppConstants.SUCCESS);
     }else{
       throw Exception(response.reasonPhrase);
     }
@@ -54,7 +56,8 @@ class AuthenticationService {
         );
         
     if (response.statusCode == HttpStatus.ok) {
-      return RegisterResponse(json: response.body, success: AppConstants.SUCCESS);
+      
+      return RegisterResponse(json: response.body, success: AppConstants.SUCCESS, profile: ProfileJ.fromJson(jsonDecode(response.body) as Map<String, dynamic>));
     }else{
       throw Exception(response.reasonPhrase);
     }

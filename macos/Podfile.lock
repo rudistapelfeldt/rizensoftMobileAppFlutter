@@ -5,7 +5,7 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - realm (2.2.1):
+  - realm (3.2.0):
     - FlutterMacOS
 
 DEPENDENCIES:
@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/realm/macos
 
 SPEC CHECKSUMS:
-  flutter_secure_storage_macos: d56e2d218c1130b262bef8b4a7d64f88d7f9c9ea
+  flutter_secure_storage_macos: 59459653abe1adb92abbc8ea747d79f8d19866c9
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
-  realm: 1add994789fe770829b8573f42d223d6cff1c5a3
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  realm: 43197169b9f958a24357e06582c22c59c8be02f5
 
 PODFILE CHECKSUM: 236401fc2c932af29a9fcf0e97baeeb2d750d367
 

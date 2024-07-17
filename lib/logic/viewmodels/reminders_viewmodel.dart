@@ -23,7 +23,7 @@ class RemindersViewModel extends BaseViewModel{
 
   RemindersViewModel(BuildContext context){
     baseContext = context;
-    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema]));
+    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema, Profile.schema]));
     _remindersService = RepositoryHelper.createReminderRepository(realmHelper!.realm!.all<Profile>().first.id.toString());
   }
 

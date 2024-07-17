@@ -15,7 +15,7 @@ import 'package:rizensoft_mobile_app_flutter/models/register/register_request.da
 import 'package:rizensoft_mobile_app_flutter/models/routes.dart';
 import 'package:rizensoft_mobile_app_flutter/services/authentication_service.dart';
 
-class RegistrationViewModel extends BaseViewModel{
+class RegisterViewModel extends BaseViewModel {
   AuthenticationService _authenticationService =
       RepositoryHelper.globalAuthRepository;
 
@@ -23,25 +23,25 @@ class RegistrationViewModel extends BaseViewModel{
 
   NavigationHelper navigationHelper = NavigationHelper();
 
-  Profile? profile;
+  late Profile? profile;
 
-  Address? address;
+  late Address? address;
 
   RealmHelper? realmHelper;
 
-  RegistrationViewModel(BuildContext context, this.address) {
+  RegisterViewModel(BuildContext context, {required this.profile, required this.address}){
     baseContext = context;
-    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema]));
+    realmHelper = RealmHelper(context, Configuration.local([Address.schema, Reminder.schema, Profile.schema]));
   }
 
   Future register() async{
     try{
-      var response = await _authenticationService.register(RegisterRequest(address!, profile!));
+      var response = await _authenticationService.register(RegisterRequest(registerProfile: this.profile));
 
       //Add access token to secure storage
       await addAccessToken(response!.accessToken);
       //Add the user's profile
-      if (realmHelper!.addProfile(response.profile()!)){
+      if (realmHelper!.addProfile(response.getProfile!)){
         DialogHelper.showToast(AppConstants.registerTexts.SUCCESSFUL, Toast.LENGTH_LONG, ToastGravity.BOTTOM, Theme.of(baseContext!).primaryColor, Theme.of(baseContext!).colorScheme.secondary, Theme.of(baseContext!).textTheme.displaySmall!.fontSize!);
         //navigate to dashboard
         await navigateToDashboard();

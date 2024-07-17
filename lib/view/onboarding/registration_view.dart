@@ -8,7 +8,7 @@ import 'package:rizensoft_mobile_app_flutter/helpers/app_constants.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/dialog_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/helpers/styles.dart';
-import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/registration_viewmodel.dart';
+import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/register_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
@@ -61,6 +61,8 @@ class RegistrationViewState extends State<RegistrationView> {
   Validator validator = Validator();
   static Profile? profile;
   static Address? address;
+  late List<Address>? addresses = [];
+  late List<Reminder>? reminders = [];
   String? emailAddress = '';
   String? password = '';
   FlutterPwValidator get passwordValidator => FlutterPwValidator(
@@ -76,7 +78,7 @@ class RegistrationViewState extends State<RegistrationView> {
         onSuccess: () {
           profile!.password = passwordController.text;
           DialogHelper.showToast(
-              passwordValidator.strings!.validPassword,
+              'Password valid',
               Toast.LENGTH_LONG,
               ToastGravity.BOTTOM,
               Theme.of(context).colorScheme.primary,
@@ -85,7 +87,7 @@ class RegistrationViewState extends State<RegistrationView> {
         },
         onFail: () {
           DialogHelper.showToast(
-              passwordValidator.strings!.invalidPassword,
+              'Password invalid',
               Toast.LENGTH_LONG,
               ToastGravity.BOTTOM,
               Theme.of(context).colorScheme.error,
@@ -99,7 +101,7 @@ class RegistrationViewState extends State<RegistrationView> {
   void initState() {
     super.initState();
     realm = RealmHelper(
-        context, Configuration.local([Address.schema, Reminder.schema])).realm!;
+        context, Configuration.local([Address.schema, Reminder.schema, Profile.schema])).realm!;
     initialization();
   }
 
@@ -217,7 +219,7 @@ class RegistrationViewState extends State<RegistrationView> {
     // the splash screen is displayed.  Remove the following example because
     // delaying the user experience is a bad design practice!
     // ignore_for_file: avoid_print
-    //profile = $Profile.instance;
+    profile = ProfileJ.instance;
     address = $Address.instance;
     print('ready in 3...');
     await Future.delayed(const Duration(seconds: 1));
@@ -237,13 +239,12 @@ class RegistrationViewState extends State<RegistrationView> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-
-    return ViewModelProvider<RegistrationViewModel>(
-      viewModelBuilder: () => RegistrationViewModel(context, address),
+    
+    return ViewModelProvider<RegisterViewModel>(
+      viewModelBuilder: () => RegisterViewModel(context, address: address, profile: profile),
       builder: (context, vm, child) {
         emailController.text = emailAddress ?? '';
         passwordController.text = password ?? '';
-
         return Material(
             child: DecoratedBox(
           decoration: BoxDecoration(
@@ -269,7 +270,7 @@ class RegistrationViewState extends State<RegistrationView> {
   }
 
   Widget _headerControls(
-      RegistrationViewModel viewModel, BuildContext context) {
+      RegisterViewModel viewModel, BuildContext context) {
     var registerImage = Image.asset(
       'assets/logo_transparent.png',
       width: 100,
@@ -647,7 +648,7 @@ class RegistrationViewState extends State<RegistrationView> {
   }
 
   Widget footerCoontrols(
-      RegistrationViewModel viewModel, BuildContext context) {
+      RegisterViewModel viewModel, BuildContext context) {
     return Padding(
         padding: EdgeInsets.fromLTRB(20, 20, 20, 100),
         child: Row(

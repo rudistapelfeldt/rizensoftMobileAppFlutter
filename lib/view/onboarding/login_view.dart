@@ -6,8 +6,6 @@ import 'package:rizensoft_mobile_app_flutter/helpers/realm_helper.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/login_viewmodel.dart';
 import 'package:rizensoft_mobile_app_flutter/logic/viewmodels/viewmodel_provider.dart';
 import 'package:rizensoft_mobile_app_flutter/models/keys/login_keys.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/address.dart';
-import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 import 'package:rizensoft_mobile_app_flutter/models/realm/reminder.dart';
 
 class LoginView extends StatefulWidget {
@@ -47,7 +45,7 @@ class LoginViewState extends State<LoginView> {
     realm = RealmHelper(
         context,
         Configuration.local(
-            [Address.schema, Reminder.schema, Profile.schema])).realm!;
+            [Reminder.schema])).realm!;
     emailFocusNode = FocusNode();
     passwordFocusNode = FocusNode();
     initialization();
@@ -142,7 +140,7 @@ class LoginViewState extends State<LoginView> {
               colors: [Colors.blue, Colors.orange],
             ),
           ),
-          child: SafeArea(
+          child: SafeArea (
             child: Column(
               children: <Widget>[
                 Expanded(child: SizedBox(height: 40, width: 300)),
@@ -157,7 +155,7 @@ class LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _headerControls() {
+  Widget _headerControls()  {
     var loginImage = Image.asset(
       'assets/logo_transparent.png',
       width: 100,

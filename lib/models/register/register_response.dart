@@ -5,7 +5,9 @@ import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 
 class RegisterResponse extends BaseResponse{
 
-  Profile? profile() => getProfile();
+  Profile? get getProfile => profile;
+
+  late Profile? profile;
 
   late String accessToken;
 
@@ -13,13 +15,8 @@ class RegisterResponse extends BaseResponse{
 
   late Map<String, dynamic> data;
 
-  RegisterResponse({required this.json,required super.success}){
+  RegisterResponse({required this.json,required super.success, required this.profile}){
     data = jsonDecode(this.json!) as Map<String, dynamic>;
-    
     accessToken = data['accessToken'].toString();
-  }
-
-  Profile getProfile(){
-    return ProfileJ.fromJson(data['profile']);
   }
 }

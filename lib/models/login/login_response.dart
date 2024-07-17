@@ -5,21 +5,21 @@ import 'package:rizensoft_mobile_app_flutter/models/realm/profile.dart';
 
 @JsonSerializable()
 class LoginResponse extends BaseResponse {
-  Profile? profile() => getProfile();
 
   late String? accessToken;
 
-  late Map<String, dynamic>? data;
+  late Profile? profile;
 
-  String? json;
+  static String json ='';
 
-  LoginResponse({required this.json, required super.success}) {
-    data = jsonDecode(this.json!) as Map<String, dynamic>;
+  static Map<String, dynamic> get data => jsonDecode(getJson()) as Map<String, dynamic>;
 
-    accessToken = data!['accessToken'].toString();
-  }
+    LoginResponse(String? jsonString, {required super.success}) {
+      json = LoginResponse.getJson();
+      accessToken = data['accessToken'].toString();
+      profile = ProfileJ.fromJson((data['profile'] as Map<String, dynamic>));
+    }
 
-  Profile getProfile(){
-    return ProfileJ.fromJson(data!['profile']);
-  }
+    static String getJson() => json;
+
 }

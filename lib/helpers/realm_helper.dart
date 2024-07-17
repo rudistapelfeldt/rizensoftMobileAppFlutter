@@ -50,10 +50,10 @@ class RealmHelper{
     return profileFound!;
   }
 
-  // void updateProfile(Profile profile){
-  //   existingProfile = findUserByKey(profile.id);
-  //   realm?.write(() {
-  //     existingProfile = profile;
-  //   });
-  // }
+  void updateProfile(Profile profile){
+    existingProfile = findUserByKey(profile.id!);
+    realm?.write(() {
+      existingProfile = profile;
+    });
+  }
 }
